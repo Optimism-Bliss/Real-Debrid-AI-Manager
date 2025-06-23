@@ -1,0 +1,45 @@
+{
+  "corrections": {
+    "The Mermaid (1973) {tmdb-426692}": {
+      "original": "Movie",
+      "correct": "Movie",
+      "reason": "",
+      "timestamp": "2025-06-22 23:35:57.678689",
+      "applied": false
+    },
+    "TYOD-190_MR_540p": {
+      "original": "Movie",
+      "correct": "JAV",
+      "reason": "TYOD là jav code",
+      "timestamp": "2025-06-22 23:37:11.945433",
+      "applied": false
+    }
+  },
+  "learning_patterns": [
+    {
+      "folder_name": "The Mermaid (1973) {tmdb-426692}",
+      "original_classification": "Movie",
+      "correct_classification": "Movie",
+      "extracted_features": {
+        "jav_code": "TMDB-426692",
+        "length": 32,
+        "has_numbers": true,
+        "has_letters": true,
+        "has_special_chars": true
+      }
+    },
+    {
+      "folder_name": "TYOD-190_MR_540p",
+      "original_classification": "Movie",
+      "correct_classification": "JAV",
+      "extracted_features": {
+        "jav_code": "TYOD-190",
+        "length": 16,
+        "has_numbers": true,
+        "has_letters": true,
+        "has_special_chars": true
+      }
+    }
+  ],
+  "last_updated": "2025-06-22 23:27:21.078481"
+}

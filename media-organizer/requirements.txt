@@ -1,0 +1,7 @@
+requests>=2.31.0
+pymediainfo>=6.0.1
+watchdog>=3.0.0
+regex>=2023.6.3
+flask>=2.3.0
+openai>=1.0.0
+python-dotenv>=1.0.0 

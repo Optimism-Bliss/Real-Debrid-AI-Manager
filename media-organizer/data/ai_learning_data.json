@@ -1,0 +1,15 @@
+{
+  "jav_patterns": [
+    "TYOD-190"
+  ],
+  "movie_patterns": [],
+  "tv_patterns": [],
+  "corrections": {
+    "TYOD-190_MR_540p": {
+      "original": "Movie",
+      "correct": "JAV",
+      "timestamp": "1750610231.948641"
+    }
+  },
+  "confidence_scores": {}
+}

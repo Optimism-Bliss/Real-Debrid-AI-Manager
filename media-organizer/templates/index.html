@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Media Organizer{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshStats()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Processed Files</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.processed_files }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-file-alt fa-2x text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">AI Classifications</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.ai_classifications }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-robot fa-2x text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Manual Corrections</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.manual_corrections }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-edit fa-2x text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stats-card h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Learning Patterns</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.learning_patterns }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-brain fa-2x text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('add_correction') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-plus"></i> Add Correction
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <button class="btn btn-success w-100" onclick="applyCorrections()">
+                            <i class="fas fa-check"></i> Apply Corrections
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <button class="btn btn-info w-100" onclick="refreshStats()">
+                            <i class="fas fa-sync-alt"></i> Refresh Stats
+                        </button>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <button class="btn btn-warning w-100" onclick="cleanupCache()">
+                            <i class="fas fa-broom"></i> Cleanup Cache
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-history"></i> Recent Activity
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="recentActivity">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-spinner fa-spin"></i> Loading recent activity...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Status -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-server"></i> System Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-circle text-success"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">AI Classifier</h6>
+                                <small class="text-muted">OpenAI API Connected</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-circle text-success"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0">Smart Cache</h6>
+                                <small class="text-muted">Active and Learning</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshStats() {
+    $.get('/api/stats', function(data) {
+        // Update stats cards
+        $('.stats-card').each(function(index) {
+            const values = [data.processed_files, data.ai_classifications, data.manual_corrections, data.learning_patterns];
+            $(this).find('.h5').text(values[index]);
+        });
+        
+        // Show success message
+        showAlert('Statistics refreshed successfully!', 'success');
+    });
+}
+
+function applyCorrections() {
+    $.post('/api/apply_corrections', function(data) {
+        if (data.success) {
+            showAlert(data.message, 'success');
+            refreshStats();
+        } else {
+            showAlert(data.message, 'danger');
+        }
+    });
+}
+
+function cleanupCache() {
+    if (confirm('Are you sure you want to cleanup old cache entries? This will remove entries older than 30 days.')) {
+        $.post('/api/cleanup_cache', function(data) {
+            if (data.success) {
+                showAlert('Cache cleaned up successfully!', 'success');
+                refreshStats();
+            } else {
+                showAlert(data.message, 'danger');
+            }
+        });
+    }
+}
+
+function showAlert(message, type) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Remove existing alerts
+    $('.alert').remove();
+    
+    // Add new alert at the top
+    $('.main-content .pt-3').prepend(alertHtml);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(function() {
+        $('.alert').fadeOut();
+    }, 5000);
+}
+
+// Load recent activity on page load
+$(document).ready(function() {
+    loadRecentActivity();
+});
+
+function loadRecentActivity() {
+    $.get('/api/corrections', function(data) {
+        const corrections = Object.entries(data).slice(0, 5); // Show last 5
+        
+        if (corrections.length === 0) {
+            $('#recentActivity').html('<div class="text-center text-muted">No recent activity</div>');
+            return;
+        }
+        
+        let html = '';
+        corrections.forEach(([folder, correction]) => {
+            const date = new Date(correction.timestamp).toLocaleDateString();
+            html += `
+                <div class="d-flex align-items-center mb-3">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-edit text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="mb-0">${folder}</h6>
+                        <small class="text-muted">${correction.original} → ${correction.correct} • ${date}</small>
+                    </div>
+                </div>
+            `;
+        });
+        
+        $('#recentActivity').html(html);
+    });
+}
+</script>
+{% endblock %} 

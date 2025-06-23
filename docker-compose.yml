@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # =============================================================================
+  # REAL DEBRID STRM GENERATOR
+  # Downloads and creates .strm files from Real Debrid API
+  # =============================================================================
+  real-debrid-strm:
+    build: ./Real-debrid-Strm
+    container_name: real-debrid-strm
+    restart: unless-stopped
+    
+    environment:
+      # Real Debrid API
+      - REAL_DEBRID_API_KEY=${REAL_DEBRID_API_KEY}
+      
+      # Path Settings
+      - MEDIA_PATH=/media
+      
+      # Cycle Settings
+      - CYCLE_INTERVAL_MINUTES=${CYCLE_INTERVAL_MINUTES:-20}
+      - FILE_EXPIRY_DAYS=${FILE_EXPIRY_DAYS:-14}
+      
+      # API Retry Settings
+      - RETRY_503_ATTEMPTS=${RETRY_503_ATTEMPTS:-2}
+      - RETRY_429_ATTEMPTS=${RETRY_429_ATTEMPTS:-3}
+      
+      # Common Settings
+      - TZ=Asia/Ho_Chi_Minh
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - PYTHONUNBUFFERED=1
+    
+    volumes:
+      # Output: STRM files go to /shared/Media/unorganized/
+      - ./shared/Media:/media
+      
+      # Logs and data
+      - ./shared/logs/strm:/app/logs
+      - ./shared/output/strm:/app/output
+      - ./Real-debrid-Strm/config/settings.yaml:/app/config/settings.yaml
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    networks:
+      - realdebrid-stack
+
+  # =============================================================================  
+  # MEDIA ORGANIZER
+  # Organizes .strm files into proper Movie/Shows/JAV categories
+  # =============================================================================
+  media-organizer:
+    build:
+      context: ./media-organizer
+      dockerfile: Dockerfile
+    container_name: media-organizer
+    command: python monitor.py
+    volumes:
+      - ./shared/Media:/app/media
+      - ./shared/logs/organizer:/app/logs
+      - ./media-organizer/data:/app/data
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - REAL_DEBRID_API_KEY=${REAL_DEBRID_API_KEY}
+      - AI_CONFIDENCE_THRESHOLD=${AI_CONFIDENCE_THRESHOLD}
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+    depends_on:
+      - real-debrid-strm
+
+  media-organizer-web:
+    build:
+      context: ./media-organizer
+      dockerfile: Dockerfile
+    container_name: media-organizer-web
+    command: ["python", "web_interface.py"]
+    volumes:
+      - ./shared/logs/organizer:/app/logs
+      - ./media-organizer/data:/app/data
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - PORT=5000
+      - DEBUG=False
+    ports:
+      - "5002:5000"
+    restart: unless-stopped
+    depends_on:
+      - media-organizer
+
+# =============================================================================
+# NETWORKS & VOLUMES
+# =============================================================================
+networks:
+  realdebrid-stack:
+    driver: bridge
+
+volumes:
+  # Optional: Use named volumes instead of bind mounts
+  shared-media:
+    driver: local
+  shared-logs:  
+    driver: local
+  shared-output:
+    driver: local 

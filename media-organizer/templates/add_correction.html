@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Add Correction - Media Organizer{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="fas fa-plus"></i> Add Manual Correction
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('corrections') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Corrections
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-edit"></i> Correction Details
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="correctionForm">
+                    <div class="mb-3">
+                        <label for="folderName" class="form-label">
+                            <i class="fas fa-folder"></i> Folder Name *
+                        </label>
+                        <input type="text" class="form-control" id="folderName" name="folder_name" 
+                               placeholder="e.g., TYOD-190_MR_540p, Avengers.Endgame.2019, Black.Mirror.S01" required>
+                        <div class="form-text">Enter the exact folder name from 'unorganized' that was misclassified.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="correctTmdbId" class="form-label">Correct TMDB ID (Optional)</label>
+                        <input type="text" class="form-control" id="correctTmdbId" name="correct_tmdb_id" placeholder="e.g., 381890 for 'The Mermaid (2016)'">
+                        <div class="form-text">If the movie/show was identified incorrectly, provide the correct TMDB ID to fix it.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="originalClassification" class="form-label">
+                            <i class="fas fa-exclamation-triangle"></i> Original Classification
+                        </label>
+                        <select class="form-select" id="originalClassification" name="original">
+                            <option value="">Unknown (Auto-detect)</option>
+                            <option value="Movie">Movie</option>
+                            <option value="Shows">Shows</option>
+                            <option value="JAV">JAV</option>
+                            <option value="SKIP">SKIP</option>
+                        </select>
+                        <div class="form-text">The incorrect classification that was applied.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="correctClassification" class="form-label">
+                            <i class="fas fa-check-circle"></i> Correct Classification *
+                        </label>
+                        <select class="form-select" id="correctClassification" name="correct" required>
+                            <option value="">Select correct classification</option>
+                            <option value="JAV">JAV (Japanese Adult Video)</option>
+                            <option value="Movie">Movie (Film/Movie)</option>
+                            <option value="Shows">Shows (TV Series)</option>
+                            <option value="SKIP">SKIP (Spam/Ad)</option>
+                        </select>
+                        <div class="form-text">The correct classification for this folder</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">
+                            <i class="fas fa-comment"></i> Reason (Optional)
+                        </label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" 
+                                  placeholder="Explain why this correction is needed (helps AI learn better)"></textarea>
+                        <div class="form-text">Optional explanation to help the AI learn from this correction</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary me-md-2" onclick="resetForm()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Add Correction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Help Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-question-circle"></i> Help & Examples
+                </h5>
+            </div>
+            <div class="card-body">
+                <h5>Common JAV Patterns:</h5>
+                <p><code>TYOD-190</code> &rarr; JAV<br>
+                   <code>SONE-123</code> &rarr; JAV<br>
+                   <code>FC2-PPV-123456</code> &rarr; JAV
+                </p>
+
+                <h5>Common Movie Patterns:</h5>
+                <p><code>Avengers.Endgame.2019</code> &rarr; Movie<br>
+                   <code>The.Matrix.1999</code> &rarr; Movie
+                </p>
+                <p>Find the correct TMDB ID on <a href="https://www.themoviedb.org/" target="_blank">The Movie Database</a> website.</p>
+
+                <h5>Common Show Patterns:</h5>
+                <p><code>Black.Mirror.S01</code> &rarr; Shows<br>
+                   <code>Friends.S01E01</code> &rarr; Shows
+                </p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="fillExample('jav')">
+                        <i class="fas fa-film"></i> JAV Example
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="fillExample('movie')">
+                        <i class="fas fa-video"></i> Movie Example
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="fillExample('show')">
+                        <i class="fas fa-tv"></i> Show Example
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle text-success"></i> Success!
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="successMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('corrections') }}" class="btn btn-primary">View All Corrections</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Form submission
+    $('#correctionForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            folder_name: $('#folderName').val().trim(),
+            correct_tmdb_id: $('#correctTmdbId').val().trim(),
+            original: $('#originalClassification').val().trim(),
+            correct: $('#correctClassification').val().trim(),
+            reason: $('#reason').val().trim()
+        };
+        
+        // Validation
+        if (!formData.folder_name) {
+            showAlert('Please enter a folder name', 'danger');
+            return;
+        }
+        
+        if (!formData.correct) {
+            showAlert('Please select the correct classification', 'danger');
+            return;
+        }
+        
+        // Submit via AJAX
+        $.ajax({
+            url: '/api/add_correction',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    $('#successMessage').text(response.message);
+                    $('#successModal').modal('show');
+                    resetForm();
+                } else {
+                    showAlert(response.message, 'danger');
+                }
+            },
+            error: function() {
+                showAlert('An error occurred while adding the correction', 'danger');
+            }
+        });
+    });
+});
+
+function resetForm() {
+    $('#correctionForm')[0].reset();
+    $('#folderName').focus();
+}
+
+function fillExample(type) {
+    switch(type) {
+        case 'jav':
+            $('#folderName').val('TYOD-190_MR_540p');
+            $('#originalClassification').val('Movie');
+            $('#correctClassification').val('JAV');
+            $('#reason').val('TYOD is a JAV studio code, should be classified as JAV');
+            break;
+        case 'movie':
+            $('#folderName').val('Avengers.Endgame.2019.INTERNAL.UHD');
+            $('#originalClassification').val('Shows');
+            $('#correctClassification').val('Movie');
+            $('#reason').val('Avengers Endgame is a movie, not a TV show');
+            break;
+        case 'show':
+            $('#folderName').val('Black.Mirror.S01.Complete.1080p');
+            $('#originalClassification').val('Movie');
+            $('#correctClassification').val('Shows');
+            $('#reason').val('Black Mirror is a TV series with season/episode format');
+            break;
+    }
+}
+
+function showAlert(message, type) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Remove existing alerts
+    $('.alert').remove();
+    
+    // Add new alert at the top
+    $('.main-content .pt-3').prepend(alertHtml);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(function() {
+        $('.alert').fadeOut();
+    }, 5000);
+}
+
+// Auto-detect original classification when folder name changes
+$('#folderName').on('input', function() {
+    const folderName = $(this).val().toLowerCase();
+    
+    // Simple pattern detection
+    if (folderName.includes('s01') || folderName.includes('s02') || folderName.includes('season')) {
+        $('#originalClassification').val('Shows');
+    } else if (folderName.includes('2019') || folderName.includes('2020') || folderName.includes('2021')) {
+        $('#originalClassification').val('Movie');
+    } else if (folderName.includes('tyod') || folderName.includes('sone') || folderName.includes('fc2')) {
+        $('#originalClassification').val('Movie'); // Common misclassification
+    }
+});
+</script>
+{% endblock %} 
