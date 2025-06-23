@@ -35,7 +35,7 @@ Real Debrid API → Container Real-debrid-Strm → /shared/Media/unorganized/ �
 | **Chức năng** | Tạo file STRM từ Real Debrid API |
 | **Đầu vào** | Torrents, links từ Real Debrid |
 | **Đầu ra** | `/shared/Media/unorganized/` |
-| **Lịch trình** | Chu kỳ 20 phút |
+| **Lịch trình** | Gọi API Real-Debrid mỗi 20 phút |
 | **Làm mới** | Link hết hạn sau 14 ngày |
 | **Giới hạn tốc độ** | 200 req/phút (chung), 70 req/phút (torrents) |
 | **Lọc thông minh** | Video >300MB, phụ đề, loại bỏ file rác |
@@ -48,7 +48,7 @@ Real Debrid API → Container Real-debrid-Strm → /shared/Media/unorganized/ �
 | **Đầu ra** | `/shared/Media/{JAV,Shows,Movies}/` |
 | **Nhận dạng** | Hơn 60 studio JAV, TV shows, Phim |
 | **API** | Tích hợp TMDB để lấy metadata |
-| **Giám sát** | Theo dõi file thời gian thực với watchdog |
+| **Giám sát** | Real-time với watchdog + periodic scan mỗi 30 phút |
 | **Múi giờ** | Asia/Ho_Chi_Minh |
 
 ### 🌐 **Container 3: Media-Organizer-Web**
@@ -123,13 +123,13 @@ OPENAI_API_KEY=your_openai_key_here
 
 ### **⏰ Cài đặt thời gian**
 ```env
-# Lịch trình Real-debrid-Strm
-CYCLE_INTERVAL_MINUTES=20      # Kiểm tra nội dung mới mỗi 20 phút
+# Lịch trình Real-debrid-Strm - Gọi API Real-Debrid
+CYCLE_INTERVAL_MINUTES=20      # Gọi API Real-Debrid mỗi 20 phút để tìm torrents mới
 FILE_EXPIRY_DAYS=14           # Làm mới file .strm sau 14 ngày
 
-# Lịch trình Media-Organizer  
-MONITOR_INTERVAL_MINUTES=30   # Kiểm tra file hết hạn mỗi 30 phút
-ORGANIZE_DELAY_SECONDS=60     # Độ trễ để xử lý theo lô, tránh spam
+# Lịch trình Media-Organizer - Xử lý file và dọn dẹp
+MONITOR_INTERVAL_MINUTES=30   # Periodic scan mỗi 30 phút (fallback cho real-time monitoring)
+ORGANIZE_DELAY_SECONDS=60     # Độ trễ debounce cho real-time processing, tránh spam
 ```
 
 ### **🎛️ Cài đặt nâng cao**
