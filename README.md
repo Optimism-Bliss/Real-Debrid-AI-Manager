@@ -19,7 +19,7 @@ Real Debrid API → Container Real-debrid-Strm → /shared/Media/unorganized/ �
 - ✅ **Tự động hóa 100%** việc tải xuống và sắp xếp media.
 - ✅ **Không cần can thiệp thủ công** sau khi cài đặt.
 - ✅ **Phân loại thông minh** cho JAV, TV Shows, Phim.
-- ✅ Cấu trúc thư mục **sẵn sàng cho Jellyfin/Plex**.
+- ✅ Cấu trúc thư mục **tối ưu cho Jellyfin & Emby** (Lưu ý: Plex không hỗ trợ file .strm trực tiếp).
 - ✅ **Hoạt động ổn định** với logic thử lại và kiểm tra sức khỏe.
 - ✅ **Giao diện Web** để quản lý và sửa lỗi metadata.
 - ✅ **Giám sát thời gian thực** bằng cách theo dõi file.
