@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   real-debrid-strm:
-    image: ghcr.io/optimism-bliss/real-debrid-strm:latest
+    image: ghcr.io/optimism-bliss/real-debrid-ai-manager/real-debrid-strm:latest
     container_name: real-debrid-strm
     restart: unless-stopped
     environment:
@@ -18,7 +18,7 @@ services:
       - real-debrid-network
 
   media-organizer:
-    image: ghcr.io/optimism-bliss/media-organizer:latest
+    image: ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:latest
     container_name: media-organizer
     restart: unless-stopped
     environment:
@@ -37,7 +37,7 @@ services:
       - real-debrid-network
 
   media-organizer-web:
-    image: ghcr.io/optimism-bliss/media-organizer:latest
+    image: ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:latest
     container_name: media-organizer-web
     restart: unless-stopped
     command: python web_interface.py

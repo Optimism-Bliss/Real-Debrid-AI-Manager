@@ -6,14 +6,14 @@ Sản phẩm **Real-Debrid Full Stack** đã được đóng gói thành Docker 
 
 ### **Real-Debrid-STRM**
 ```bash
-ghcr.io/optimism-bliss/real-debrid-strm:latest
-ghcr.io/optimism-bliss/real-debrid-strm:v1.0.0
+ghcr.io/optimism-bliss/real-debrid-ai-manager/real-debrid-strm:latest
+ghcr.io/optimism-bliss/real-debrid-ai-manager/real-debrid-strm:v1.0.0
 ```
 
 ### **Media-Organizer**
 ```bash
-ghcr.io/optimism-bliss/media-organizer:latest
-ghcr.io/optimism-bliss/media-organizer:v1.0.0
+ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:latest
+ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:v1.0.0
 ```
 
 ## 🚀 **Quick Start với Docker Images**
@@ -64,15 +64,15 @@ version: '3.8'
 
 services:
   real-debrid-strm:
-    image: ghcr.io/optimism-bliss/real-debrid-strm:latest
+    image: ghcr.io/optimism-bliss/real-debrid-ai-manager/real-debrid-strm:latest
     # ... cấu hình đầy đủ
 
   media-organizer:
-    image: ghcr.io/optimism-bliss/media-organizer:latest
+    image: ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:latest
     # ... cấu hình đầy đủ
 
   media-organizer-web:
-    image: ghcr.io/optimism-bliss/media-organizer:latest
+    image: ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:latest
     # ... cấu hình đầy đủ
 ```
 
@@ -82,14 +82,14 @@ Nếu muốn pull images về trước:
 
 ```bash
 # Pull Real-Debrid-STRM
-docker pull ghcr.io/optimism-bliss/real-debrid-strm:latest
+docker pull ghcr.io/optimism-bliss/real-debrid-ai-manager/real-debrid-strm:latest
 
 # Pull Media-Organizer
-docker pull ghcr.io/optimism-bliss/media-organizer:latest
+docker pull ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:latest
 
 # Pull phiên bản cụ thể
-docker pull ghcr.io/optimism-bliss/real-debrid-strm:v1.0.0
-docker pull ghcr.io/optimism-bliss/media-organizer:v1.0.0
+docker pull ghcr.io/optimism-bliss/real-debrid-ai-manager/real-debrid-strm:v1.0.0
+docker pull ghcr.io/optimism-bliss/real-debrid-ai-manager/media-organizer:v1.0.0
 ```
 
 ## 🌐 **Truy cập Web Interface**
@@ -118,7 +118,7 @@ docker logs media-organizer-web
 ## 🔗 **Repository Links**
 
 - **GitHub Repository**: https://github.com/Optimism-Bliss/Real-Debrid-AI-Manager
-- **Docker Images**: https://github.com/Optimism-Bliss?tab=packages&repo_name=Real-Debrid-AI-Manager
+- **Docker Images**: https://github.com/Optimism-Bliss/Real-Debrid-AI-Manager/packages
 
 ## 📝 **Lưu ý**
 
