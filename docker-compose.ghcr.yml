@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  real-debrid-strm:
+    image: ghcr.io/optimism-bliss/real-debrid-strm:latest
+    container_name: real-debrid-strm
+    restart: unless-stopped
+    environment:
+      - REAL_DEBRID_API_KEY=${REAL_DEBRID_API_KEY}
+      - CYCLE_INTERVAL_MINUTES=${CYCLE_INTERVAL_MINUTES:-20}
+      - FILE_EXPIRY_DAYS=${FILE_EXPIRY_DAYS:-14}
+      - TZ=${TZ:-Asia/Ho_Chi_Minh}
+    volumes:
+      - ./shared/Media:/app/media
+      - ./shared/output/strm:/app/output
+      - ./shared/logs/strm:/app/logs
+    networks:
+      - real-debrid-network
+
+  media-organizer:
+    image: ghcr.io/optimism-bliss/media-organizer:latest
+    container_name: media-organizer
+    restart: unless-stopped
+    environment:
+      - REAL_DEBRID_API_KEY=${REAL_DEBRID_API_KEY}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MONITOR_INTERVAL_MINUTES=${MONITOR_INTERVAL_MINUTES:-30}
+      - ORGANIZE_DELAY_SECONDS=${ORGANIZE_DELAY_SECONDS:-60}
+      - TZ=${TZ:-Asia/Ho_Chi_Minh}
+    volumes:
+      - ./shared/Media:/app/media
+      - ./shared/output/organizer:/app/output
+      - ./shared/logs/organizer:/app/logs
+      - ./media-organizer/data:/app/data
+    networks:
+      - real-debrid-network
+
+  media-organizer-web:
+    image: ghcr.io/optimism-bliss/media-organizer:latest
+    container_name: media-organizer-web
+    restart: unless-stopped
+    command: python web_interface.py
+    ports:
+      - "5002:5002"
+    environment:
+      - REAL_DEBRID_API_KEY=${REAL_DEBRID_API_KEY}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TZ=${TZ:-Asia/Ho_Chi_Minh}
+    volumes:
+      - ./shared/Media:/app/media
+      - ./shared/output/organizer:/app/output
+      - ./shared/logs/organizer:/app/logs
+      - ./media-organizer/data:/app/data
+    networks:
+      - real-debrid-network
+
+networks:
+  real-debrid-network:
+    driver: bridge 
